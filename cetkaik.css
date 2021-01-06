@@ -1,0 +1,15 @@
+.cetkaik-player.theme-simple .board_inner tr td {
+    position: relative
+}
+
+.place_55 {
+    background-color: hsl(129, 38.5%, 45.4%);
+}
+
+.place_44, .place_33, .place_66, .place_77, .place_73, .place_64, .place_46, .place_37 {
+    background-color: hsl(27, 54.5%, 81.1%);
+}
+
+.place_56, .place_57, .place_54, .place_53, .place_65, .place_75, .place_45, .place_35 {
+    background-color: hsl(213, 33.6%, 78.9%);
+}
