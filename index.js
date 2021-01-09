@@ -2,8 +2,8 @@ import * as wasm from "wasm-cetkaik";
 
 wasm.my_init_function();
 
-const { depict_state, depict_state2 } = (() => {
-    function depict_state2(state) {
+const { depict_state2 } = (() => {
+    function depict_state2(state, howmanyth) {
         const PLAYER_STATE = {
             ia_side: {
                 player_name_short: "筆",
@@ -32,14 +32,14 @@ const { depict_state, depict_state2 } = (() => {
             case "Iat1": { document.getElementById("season_text").innerHTML = "冬"; break; }
         }
 
-        document.getElementById("turn_text").innerHTML = 0; // fixme
+        document.getElementById("turn_text").innerHTML = howmanyth; // fixme
         document.getElementById("rate_text").innerHTML = rate.slice(1); // strip off the X
         document.getElementById("ia_side_player_name_short_text").innerHTML = PLAYER_STATE.ia_side.player_name_short;
         document.getElementById("a_side_player_name_short_text").innerHTML = PLAYER_STATE.a_side.player_name_short;
         document.getElementById("a_side_player_name_text").innerHTML = PLAYER_STATE.a_side.player_name;
         document.getElementById("ia_side_player_name_text").innerHTML = PLAYER_STATE.ia_side.player_name;
-        document.getElementById("a_side_piece_stand").innerHTML = depict_hop1zuo1(a_side_hop1zuo1);
-        document.getElementById("ia_side_piece_stand").innerHTML = depict_hop1zuo1(ia_side_hop1zuo1);
+        document.getElementById("a_side_piece_stand").innerHTML = depict_hop1zuo1_snd(a_side_hop1zuo1);
+        document.getElementById("ia_side_piece_stand").innerHTML = depict_hop1zuo1_snd(ia_side_hop1zuo1);
         document.getElementById("score_a_side_text").innerHTML = a_score;
         document.getElementById("score_ia_side_text").innerHTML = ia_score;
         const focus = "ZIA"; // FIXME
@@ -69,9 +69,21 @@ const { depict_state, depict_state2 } = (() => {
         "船", "無", "兵", "弓", "車", "虎", "馬", "筆", "巫", "将", "王", "皇"
     ];
 
-    function depict_hop1zuo1(pieces) {
+    function depict_hop1zuo1_snd(pieces) {
+
         let ans = "";
         for (let i = 0; i < pieces.length; i++) {
+            const {color, prof} = pieces[i];
+            ans += `<li><div style="width: 23px; height: 43px; transform: scale(0.26); transform-origin: top left">${barr(color, prof, false)}</div></li>`;
+        }
+        return ans
+    }
+
+    function depict_hop1zuo1(pieces) {
+        
+        let ans = "";
+        for (let i = 0; i < pieces.length; i++) {
+            wasm.greet(JSON.stringify(pieces[i]));
             const [color, prof] = pieces[i];
             ans += `<li><div style="width: 23px; height: 43px; transform: scale(0.26); transform-origin: top left">${barr(color, prof, false)}</div></li>`;
         }
@@ -139,8 +151,8 @@ const { depict_state, depict_state2 } = (() => {
 
     return { depict_state, depict_state2 };
 })();
-/*
-depict_state({
+
+/*depict_state({
     season: "秋",
     turn: 29,
     rate: 4,
@@ -206,4 +218,27 @@ depict_state({
 
 });*/
 
-depict_state2(wasm.send_example_to_js());
+const GAME_BUFFER = wasm.send_example_to_js();
+
+// wasm.greet(JSON.stringify(GAME_BUFFER));
+
+async function main() {
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    for (let i = 0; i < GAME_BUFFER.length; i++) {
+        depict_state2(GAME_BUFFER[i], i);
+        await sleep(2000);
+    }
+    alert("finished");
+}
+main();
+
+
+// const GAME_BUFFER = wasm.dump_game_buffer();
+
+// wasm.greet(GAME_BUFFER.length + "");
+
+//depict_state2(GAME_BUFFER[0]);
+
+//for (let i = 0; i < wasm.get_game_length(); i++) {
+    
+//}
